@@ -26,6 +26,18 @@ CREATE TABLE complaints (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- comments table for internal notes and user comments on complaints
+CREATE TABLE comments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    complaint_id INT NOT NULL,
+    user_id INT NOT NULL,
+    message TEXT NOT NULL,
+    is_internal BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (complaint_id) REFERENCES complaints(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Insert default admin (password: admin123 - you need to hash this)
 -- Note: Run this after backend is running to create hashed password
 -- INSERT INTO users (username, email, password, role) VALUES ('admin', 'admin@hostel.com', '$2a$10$YourHashedPasswordHere', 'admin');

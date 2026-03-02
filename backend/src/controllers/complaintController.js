@@ -32,8 +32,8 @@ export const getMyComplaints = async (req, res) => {
 
 export const getAllComplaints = async (req, res) => {
     try {
-        const { status, category } = req.query;
-        const complaints = await Complaint.findAll({ status, category });
+        const { status, category, search } = req.query;
+        const complaints = await Complaint.findAll({ status, category, search });
         res.json(complaints);
     } catch (error) {
         console.error('Get all complaints error:', error);
@@ -55,6 +55,16 @@ export const updateComplaintStatus = async (req, res) => {
         res.json({ message: 'Complaint status updated successfully' });
     } catch (error) {
         console.error('Update complaint error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export const getComplaintStats = async (req, res) => {
+    try {
+        const stats = await Complaint.getStats();
+        res.json(stats);
+    } catch (error) {
+        console.error('Get stats error:', error);
         res.status(500).json({ message: 'Server error' });
     }
 };

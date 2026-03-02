@@ -11,24 +11,39 @@ class Complaint {
     }
 
     static async findAll(filters = {}) {
-        let query = 'SELECT c.*, u.username, u.room_number FROM complaints c JOIN users u ON c.user_id = u.id';
-        const values = [];
+    let query = `
+        SELECT c.*, u.username, u.room_number 
+        FROM complaints c 
+        JOIN users u ON c.user_id = u.id
+    `;
 
-        if (filters.status) {
-            query += ' WHERE c.status = ?';
-            values.push(filters.status);
-        }
+    const conditions = [];
+    const values = [];
 
-        if (filters.category) {
-            query += filters.status ? ' AND c.category = ?' : ' WHERE c.category = ?';
-            values.push(filters.category);
-        }
-
-        query += ' ORDER BY c.created_at DESC';
-        
-        const [rows] = await pool.execute(query, values);
-        return rows;
+    if (filters.status) {
+        conditions.push('c.status = ?');
+        values.push(filters.status);
     }
+
+    if (filters.category) {
+        conditions.push('c.category = ?');
+        values.push(filters.category);
+    }
+
+    if (filters.search) {
+        conditions.push('(c.title LIKE ? OR c.description LIKE ?)');
+        values.push(`%${filters.search}%`, `%${filters.search}%`);
+    }
+
+    if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    query += ' ORDER BY c.created_at DESC';
+
+    const [rows] = await pool.execute(query, values);
+    return rows;
+}
 
     static async findByUser(userId) {
         const [rows] = await pool.execute(
@@ -53,6 +68,19 @@ class Complaint {
         );
         return result.affectedRows > 0;
     }
+    static async getStats() {
+    const [rows] = await pool.execute(`
+        SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+            SUM(CASE WHEN status = 'in-progress' THEN 1 ELSE 0 END) as in_progress,
+            SUM(CASE WHEN status = 'resolved' THEN 1 ELSE 0 END) as resolved,
+            SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected
+        FROM complaints
+    `);
+
+    return rows[0];
+}
 }
 
 export default Complaint;
