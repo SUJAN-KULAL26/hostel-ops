@@ -1,5 +1,4 @@
-CREATE DATABASE IF NOT EXISTS hostel_db;
-USE hostel_db;
+
 
 -- Users table
 CREATE TABLE users (
