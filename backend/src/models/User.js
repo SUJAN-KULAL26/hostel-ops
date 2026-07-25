@@ -14,11 +14,19 @@ class User {
         const [rows] = await pool.execute('SELECT * FROM users WHERE email = ?', [email]);
         return rows[0];
     }
+    static async findByUsername(username) {
+        const [rows] = await pool.execute(
+            'SELECT * FROM users WHERE username = ?',
+            [username]
+        );
+        return rows[0];
+    }
 
     static async findById(id) {
         const [rows] = await pool.execute('SELECT id, username, email, role, room_number FROM users WHERE id = ?', [id]);
         return rows[0];
     }
+
 }
 
 export default User;

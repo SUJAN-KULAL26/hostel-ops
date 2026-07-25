@@ -20,7 +20,7 @@
   .glass-dark {
     @apply bg-gray-900/60 backdrop-blur-2xl border border-gray-700/30;
   }
-
+G
   /* Animated gradient backgrounds */
   .gradient-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

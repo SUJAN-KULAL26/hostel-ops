@@ -12,6 +12,14 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
+        const existingUsername = await User.findByUsername(username);
+
+        if (existingUsername) {
+            return res.status(409).json({
+                message: "Username already exists"
+            });
+        }
+
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -26,8 +34,18 @@ export const register = async (req, res) => {
 
         res.status(201).json({ message: 'User created successfully', userId });
     } catch (error) {
-        console.error('Registration error:', error);
-        res.status(500).json({ message: 'Server error' });
+
+        if (error.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+                message: "Username or email already exists"
+            });
+        }
+
+        console.error("Registration error:", error);
+
+        return res.status(500).json({
+            message: "Server error"
+        });
     }
 };
 
