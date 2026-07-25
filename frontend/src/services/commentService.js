@@ -1,14 +1,14 @@
-import axios from "axios";
+import api from "./api";
 
 export const getComments = async (complaintId, token) => {
-  const res = await axios.get(`/api/comments/${complaintId}`, {
+  const res = await api.get(`/api/comments/${complaintId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;
 };
 
 export const addComment = async (complaintId, message, token) => {
-  const res = await axios.post(
+  const res = await api.post(
     `/api/comments/${complaintId}`,
     { message },
     {
@@ -19,7 +19,7 @@ export const addComment = async (complaintId, message, token) => {
 };
 
 export const deleteComment = async (commentId, token) => {
-  const res = await axios.delete(`/api/comments/${commentId}`, {
+  const res = await api.delete(`/api/comments/${commentId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return res.data;

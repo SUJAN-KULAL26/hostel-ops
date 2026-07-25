@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from "../services/api";
 import ThemeToggle from '../components/ThemeToggle';
 import toast from 'react-hot-toast';
 import { getComments, addComment, deleteComment } from "../services/commentService";
@@ -12,14 +12,14 @@ export default function AdminDashboard() {
   const [updatingId, setUpdatingId] = useState(null);
   const [expandedComplaint, setExpandedComplaint] = useState(null);
   const [comments, setComments] = useState({});
-  const [newComment, setNewComment] = useState('');   
+  const [newComment, setNewComment] = useState('');
 
   useEffect(() => { fetchComplaints(); }, []);
 
   const fetchComplaints = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/complaints/all', {
+      const res = await api.get('/api/complaints/all', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComplaints(res.data);
@@ -30,7 +30,7 @@ export default function AdminDashboard() {
     setUpdatingId(id);
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`/api/complaints/${id}/status`, { status }, {
+      await api.patch(`/api/complaints/${id}/status`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success(`Status updated to ${status} ✅`);
@@ -40,37 +40,37 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteComment = async (commentId, complaintId) => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  await deleteComment(commentId, token);
+    await deleteComment(commentId, token);
 
-  const updated = await getComments(complaintId, token);
+    const updated = await getComments(complaintId, token);
 
-  setComments(prev => ({
-    ...prev,
-    [complaintId]: updated
-  }));
-};
+    setComments(prev => ({
+      ...prev,
+      [complaintId]: updated
+    }));
+  };
 
   const handleToggleComments = async (complaintId) => {
-  const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
-  if (expandedComplaint === complaintId) {
-    setExpandedComplaint(null);
-    return;
-  }
-
-  setExpandedComplaint(complaintId);
-
-  if (!comments[complaintId]) {
-    try {
-      const data = await getComments(complaintId, token);
-      setComments(prev => ({ ...prev, [complaintId]: data }));
-    } catch {
-      toast.error('Failed to load comments');
+    if (expandedComplaint === complaintId) {
+      setExpandedComplaint(null);
+      return;
     }
-  }
-};
+
+    setExpandedComplaint(complaintId);
+
+    if (!comments[complaintId]) {
+      try {
+        const data = await getComments(complaintId, token);
+        setComments(prev => ({ ...prev, [complaintId]: data }));
+      } catch {
+        toast.error('Failed to load comments');
+      }
+    }
+  };
 
   const getStatusConfig = (status) => {
     const map = {
@@ -197,7 +197,7 @@ export default function AdminDashboard() {
               <select
                 className="px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer"
                 value={filter.status}
-                onChange={(e) => setFilter({...filter, status: e.target.value})}
+                onChange={(e) => setFilter({ ...filter, status: e.target.value })}
               >
                 <option value="all">All Status</option>
                 <option value="pending">⏳ Pending</option>
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
               <select
                 className="px-4 py-2.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 text-sm font-medium focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all cursor-pointer"
                 value={filter.category}
-                onChange={(e) => setFilter({...filter, category: e.target.value})}
+                onChange={(e) => setFilter({ ...filter, category: e.target.value })}
               >
                 <option value="all">All Categories</option>
                 <option value="plumbing">🔧 Plumbing</option>
@@ -290,11 +290,10 @@ export default function AdminDashboard() {
                           value={complaint.status}
                           onChange={(e) => updateStatus(complaint.id, e.target.value)}
                           disabled={updatingId === complaint.id}
-                          className={`appearance-none pl-4 pr-10 py-3 rounded-xl border-2 text-sm font-bold cursor-pointer transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 ${
-                            updatingId === complaint.id
-                              ? 'opacity-60 cursor-wait border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 text-slate-400'
-                              : 'border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 hover:border-indigo-400 dark:hover:border-indigo-500'
-                          }`}
+                          className={`appearance-none pl-4 pr-10 py-3 rounded-xl border-2 text-sm font-bold cursor-pointer transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 ${updatingId === complaint.id
+                            ? 'opacity-60 cursor-wait border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 text-slate-400'
+                            : 'border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-300 hover:border-indigo-400 dark:hover:border-indigo-500'
+                            }`}
                         >
                           <option value="pending">⏳ Pending</option>
                           <option value="in-progress">🔄 In Progress</option>
@@ -312,72 +311,72 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   {/* Comments Section */}
-<div className="mt-4">
-  <button
-    onClick={() => handleToggleComments(complaint.id)}
-    className="text-indigo-600 dark:text-indigo-400 text-sm font-semibold hover:underline"
-  >
-    {expandedComplaint === complaint.id ? 'Hide Comments' : 'View Comments'}
-  </button>
+                  <div className="mt-4">
+                    <button
+                      onClick={() => handleToggleComments(complaint.id)}
+                      className="text-indigo-600 dark:text-indigo-400 text-sm font-semibold hover:underline"
+                    >
+                      {expandedComplaint === complaint.id ? 'Hide Comments' : 'View Comments'}
+                    </button>
 
-  {expandedComplaint === complaint.id && (
-    <div className="mt-4 bg-slate-50 dark:bg-gray-800 p-4 rounded-xl border border-slate-200 dark:border-gray-700">
-      <h4 className="text-sm font-bold mb-3 text-slate-700 dark:text-gray-300">
-        Comments
-      </h4>
+                    {expandedComplaint === complaint.id && (
+                      <div className="mt-4 bg-slate-50 dark:bg-gray-800 p-4 rounded-xl border border-slate-200 dark:border-gray-700">
+                        <h4 className="text-sm font-bold mb-3 text-slate-700 dark:text-gray-300">
+                          Comments
+                        </h4>
 
-      {comments[complaint.id]?.length === 0 && (
-        <p className="text-xs text-slate-400 mb-3">No comments yet</p>
-      )}
+                        {comments[complaint.id]?.length === 0 && (
+                          <p className="text-xs text-slate-400 mb-3">No comments yet</p>
+                        )}
 
-      {comments[complaint.id]?.map(comment => (
-        <div
-          key={comment.id}
-          className="mb-3 p-3 rounded-lg bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700"
-        >
-          <div className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-            {comment.username}
-            <button
-  onClick={() => handleDeleteComment(comment.id, complaint.id)}
-  className="text-xs text-red-500 hover:text-red-700 ml-2"
->
-  🗑 Delete
-</button>
-          </div>
-          <div className="text-sm text-slate-600 dark:text-gray-300">
-            {comment.message}
-          </div>
-          <div className="text-[10px] text-slate-400 mt-1">
-            {new Date(comment.created_at).toLocaleString()}
-          </div>
-        </div>
-      ))}
+                        {comments[complaint.id]?.map(comment => (
+                          <div
+                            key={comment.id}
+                            className="mb-3 p-3 rounded-lg bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-700"
+                          >
+                            <div className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                              {comment.username}
+                              <button
+                                onClick={() => handleDeleteComment(comment.id, complaint.id)}
+                                className="text-xs text-red-500 hover:text-red-700 ml-2"
+                              >
+                                🗑 Delete
+                              </button>
+                            </div>
+                            <div className="text-sm text-slate-600 dark:text-gray-300">
+                              {comment.message}
+                            </div>
+                            <div className="text-[10px] text-slate-400 mt-1">
+                              {new Date(comment.created_at).toLocaleString()}
+                            </div>
+                          </div>
+                        ))}
 
-      <div className="mt-3 flex gap-2">
-        <input
-          type="text"
-          placeholder="Write a comment..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-        <button
-          onClick={async () => {
-            if (!newComment.trim()) return;
-            const token = localStorage.getItem('token');
-            await addComment(complaint.id, newComment, token);
-            const updated = await getComments(complaint.id, token);
-            setComments(prev => ({ ...prev, [complaint.id]: updated }));
-            setNewComment('');
-          }}
-          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition"
-        >
-          Send
-        </button>
-      </div>
-    </div>
-  )}
-</div>
+                        <div className="mt-3 flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Write a comment..."
+                            value={newComment}
+                            onChange={(e) => setNewComment(e.target.value)}
+                            className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          />
+                          <button
+                            onClick={async () => {
+                              if (!newComment.trim()) return;
+                              const token = localStorage.getItem('token');
+                              await addComment(complaint.id, newComment, token);
+                              const updated = await getComments(complaint.id, token);
+                              setComments(prev => ({ ...prev, [complaint.id]: updated }));
+                              setNewComment('');
+                            }}
+                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition"
+                          >
+                            Send
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );

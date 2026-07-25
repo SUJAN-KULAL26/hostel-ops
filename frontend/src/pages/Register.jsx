@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from "../services/api";
 import ThemeToggle from '../components/ThemeToggle';
 import toast from 'react-hot-toast';
 
@@ -19,7 +19,7 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('/api/auth/register', { ...formData, role });
+      await api.post('/api/auth/register', { ...formData, role });
       toast.success('Account created! Please login 🎉');
       navigate('/login');
     } catch (error) {
@@ -32,7 +32,7 @@ export default function Register() {
   return (
     <div className="min-h-screen flex bg-slate-50 dark:bg-gray-950 transition-colors duration-500">
       {/* Left panel */}
-      <div className="hidden lg:flex lg:w-[55%] relative overflow-hidden" style={{background: 'linear-gradient(135deg, #f093fb 0%, #764ba2 50%, #667eea 100%)', backgroundSize: '200% 200%', animation: 'gradientShift 8s ease infinite'}}>
+      <div className="hidden lg:flex lg:w-[55%] relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #764ba2 50%, #667eea 100%)', backgroundSize: '200% 200%', animation: 'gradientShift 8s ease infinite' }}>
         {/* Animated orbs */}
         <div className="absolute inset-0">
           <div className="absolute top-16 right-16 w-72 h-72 bg-white/10 rounded-full blur-xl animate-float" />
@@ -55,7 +55,7 @@ export default function Register() {
               ✨
             </div>
             <h1 className="text-6xl font-black mb-4 leading-tight">
-              Join the<br/>
+              Join the<br />
               <span className="text-white/80">Community</span>
             </h1>
             <p className="text-lg text-white/70 leading-relaxed mb-12 max-w-md">
@@ -105,25 +105,22 @@ export default function Register() {
             {/* Role toggle */}
             <div className="relative flex bg-slate-100 dark:bg-gray-800/80 rounded-2xl p-1.5 mb-8">
               <div
-                className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] rounded-xl transition-all duration-500 ease-out ${
-                  role === 'student' ? 'left-1.5 gradient-primary shadow-lg shadow-indigo-500/25' : 'left-[calc(50%+3px)] gradient-accent shadow-lg shadow-pink-500/25'
-                }`}
+                className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] rounded-xl transition-all duration-500 ease-out ${role === 'student' ? 'left-1.5 gradient-primary shadow-lg shadow-indigo-500/25' : 'left-[calc(50%+3px)] gradient-accent shadow-lg shadow-pink-500/25'
+                  }`}
               />
               <button
                 type="button"
                 onClick={() => setRole('student')}
-                className={`relative z-10 flex-1 py-3 text-sm font-bold rounded-xl transition-colors duration-300 ${
-                  role === 'student' ? 'text-white' : 'text-slate-500 dark:text-gray-400'
-                }`}
+                className={`relative z-10 flex-1 py-3 text-sm font-bold rounded-xl transition-colors duration-300 ${role === 'student' ? 'text-white' : 'text-slate-500 dark:text-gray-400'
+                  }`}
               >
                 🎓 Student
               </button>
               <button
                 type="button"
                 onClick={() => setRole('admin')}
-                className={`relative z-10 flex-1 py-3 text-sm font-bold rounded-xl transition-colors duration-300 ${
-                  role === 'admin' ? 'text-white' : 'text-slate-500 dark:text-gray-400'
-                }`}
+                className={`relative z-10 flex-1 py-3 text-sm font-bold rounded-xl transition-colors duration-300 ${role === 'admin' ? 'text-white' : 'text-slate-500 dark:text-gray-400'
+                  }`}
               >
                 🛡️ Admin
               </button>
@@ -140,7 +137,7 @@ export default function Register() {
                     className="w-full pl-11 pr-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300"
                     placeholder="johndoe"
                     value={formData.username}
-                    onChange={(e) => setFormData({...formData, username: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   />
                 </div>
               </div>
@@ -155,7 +152,7 @@ export default function Register() {
                     className="w-full pl-11 pr-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300"
                     placeholder="you@example.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
               </div>
@@ -171,7 +168,7 @@ export default function Register() {
                       className="w-full pl-11 pr-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300"
                       placeholder="••••••"
                       value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     />
                   </div>
                 </div>
@@ -184,7 +181,7 @@ export default function Register() {
                       className="w-full pl-11 pr-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300"
                       placeholder="101"
                       value={formData.room_number}
-                      onChange={(e) => setFormData({...formData, room_number: e.target.value})}
+                      onChange={(e) => setFormData({ ...formData, room_number: e.target.value })}
                     />
                   </div>
                 </div>
@@ -193,9 +190,8 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`relative w-full py-4 px-4 text-white font-bold rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/30 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-300 mt-2 overflow-hidden ${
-                  loading ? 'opacity-80 cursor-wait' : 'hover:shadow-xl hover:shadow-indigo-500/25 hover:-translate-y-0.5 active:translate-y-0'
-                } ${role === 'student' ? 'gradient-primary' : 'gradient-accent'}`}
+                className={`relative w-full py-4 px-4 text-white font-bold rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/30 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-300 mt-2 overflow-hidden ${loading ? 'opacity-80 cursor-wait' : 'hover:shadow-xl hover:shadow-indigo-500/25 hover:-translate-y-0.5 active:translate-y-0'
+                  } ${role === 'student' ? 'gradient-primary' : 'gradient-accent'}`}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">

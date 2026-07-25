@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from "../services/api";
 import ThemeToggle from '../components/ThemeToggle';
 import toast from 'react-hot-toast';
 
@@ -21,7 +21,7 @@ export default function StudentDashboard() {
   const fetchComplaints = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/complaints/my-complaints', {
+      const res = await api.get('/api/complaints/my-complaints', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComplaints(res.data);
@@ -33,7 +33,7 @@ export default function StudentDashboard() {
     setSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      await axios.post('/api/complaints', formData, {
+      await api.post('/api/complaints', formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Complaint submitted! 🎉');
@@ -151,11 +151,10 @@ export default function StudentDashboard() {
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className={`group px-5 py-3 rounded-2xl text-sm font-bold transition-all duration-300 ${
-              showForm
-                ? 'bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-300'
-                : 'gradient-primary text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5'
-            }`}
+            className={`group px-5 py-3 rounded-2xl text-sm font-bold transition-all duration-300 ${showForm
+              ? 'bg-slate-200 dark:bg-gray-800 text-slate-600 dark:text-gray-300 hover:bg-slate-300'
+              : 'gradient-primary text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5'
+              }`}
           >
             {showForm ? '✕ Cancel' : (
               <span className="flex items-center gap-2">
@@ -184,7 +183,7 @@ export default function StudentDashboard() {
                   className="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                   placeholder="Brief description of the issue"
                   value={formData.title}
-                  onChange={(e) => setFormData({...formData, title: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 />
               </div>
 
@@ -194,7 +193,7 @@ export default function StudentDashboard() {
                   <select
                     className="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-800 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                     value={formData.category}
-                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   >
                     <option value="plumbing">🔧 Plumbing</option>
                     <option value="electrical">⚡ Electrical</option>
@@ -208,7 +207,7 @@ export default function StudentDashboard() {
                   <select
                     className="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-800 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                     value={formData.priority}
-                    onChange={(e) => setFormData({...formData, priority: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                   >
                     <option value="low">🟢 Low</option>
                     <option value="medium">🟡 Medium</option>
@@ -224,7 +223,7 @@ export default function StudentDashboard() {
                   className="w-full px-4 py-3.5 rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none"
                   placeholder="Describe the issue in detail..."
                   value={formData.description}
-                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
               </div>
 
