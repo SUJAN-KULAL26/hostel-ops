@@ -6,17 +6,19 @@ export const register = async (req, res) => {
     try {
         const { username, email, password, room_number, role } = req.body;
 
-        // Check if user exists
+        // Check if email already exists
         const existingUser = await User.findByEmail(email);
         if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({
+                message: 'User already exists'
+            });
         }
 
+        // Check if username already exists
         const existingUsername = await User.findByUsername(username);
-
         if (existingUsername) {
             return res.status(409).json({
-                message: "Username already exists"
+                message: 'Username already exists'
             });
         }
 
@@ -32,22 +34,24 @@ export const register = async (req, res) => {
             room_number
         });
 
-        res.status(201).json({ message: 'User created successfully', userId });
+        res.status(201).json({
+            message: 'User created successfully',
+            userId
+        });
+
     } catch (error) {
 
-        if (error.code === "ER_DUP_ENTRY") {
+        // Handle duplicate entry from MySQL
+        if (error.code === 'ER_DUP_ENTRY') {
             return res.status(409).json({
-                message: "Username or email already exists"
+                message: 'Username or email already exists'
             });
         }
 
-        console.error("Registration error:", error);
+        console.error('Registration error:', error);
 
         return res.status(500).json({
-            message: error.message,
-            code: error.code,
-            sqlMessage: error.sqlMessage,
-            stack: error.stack
+            message: 'Server error'
         });
     }
 };
@@ -59,20 +63,30 @@ export const login = async (req, res) => {
         // Find user
         const user = await User.findByEmail(email);
         if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({
+                message: 'Invalid credentials'
+            });
         }
 
         // Check password
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({
+                message: 'Invalid credentials'
+            });
         }
 
-        // Generate token
+        // Generate JWT token
         const token = jwt.sign(
-            { id: user.id, email: user.email, role: user.role },
+            {
+                id: user.id,
+                email: user.email,
+                role: user.role
+            },
             process.env.JWT_SECRET,
-            { expiresIn: '24h' }
+            {
+                expiresIn: '24h'
+            }
         );
 
         res.json({
@@ -84,8 +98,12 @@ export const login = async (req, res) => {
                 role: user.role
             }
         });
+
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Server error' });
+
+        return res.status(500).json({
+            message: 'Server error'
+        });
     }
 };
